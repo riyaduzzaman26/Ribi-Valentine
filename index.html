@@ -1,1 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For You 💘</title>
+  <style>
+    :root{
+      --bg1:#ffdde1;
+      --bg2:#ee9ca7;
+      --card:#ffffffcc;
+      --text:#2b2b2b;
+      --yes:#2ecc71;
+      --no:#ff6b6b;
+      --shadow: 0 20px 60px rgba(0,0,0,.15);
+    }
+    *{ box-sizing:border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      background: radial-gradient(circle at top, var(--bg1), var(--bg2));
+      overflow:hidden;
+      color:var(--text);
+    }
+    .heart{
+      position:absolute;
+      width:14px; height:14px;
+      background:#ff4d6d;
+      transform: rotate(45deg);
+      opacity:.35;
+      animation: floatUp linear forwards;
+    }
+    .heart:before, .heart:after{
+      content:"";
+      position:absolute;
+      width:14px; height:14px;
+      background:#ff4d6d;
+      border-radius:50%;
+    }
+    .heart:before{ left:-7px; top:0; }
+    .heart:after{ left:0; top:-7px; }
+    @keyframes floatUp{
+      from{ transform:translateY(0) rotate(45deg); }
+      to{ transform:translateY(-120vh) rotate(45deg); }
+    }
+    .card{
+      width:min(560px, 92vw);
+      background:var(--card);
+      backdrop-filter: blur(8px);
+      border:1px solid rgba(255,255,255,.6);
+      border-radius:24px;
+      padding:28px 22px;
+      box-shadow:var(--shadow);
+      text-align:center;
+      position:relative;
+    }
+    h1{
+      margin:0 0 8px;
+      font-size: clamp(24px, 4vw, 38px);
+      letter-spacing:.2px;
+    }
+    p{
+      margin:0 0 18px;
+      font-size: 16px;
+      opacity:.9;
+    }
+    .buttons{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    button{
+      border:none;
+      padding:14px 18px;
+      border-radius:14px;
+      font-size:16px;
+      cursor:pointer;
+      transition: transform .12s ease, box-shadow .12s ease;
+      box-shadow: 0 10px 20px rgba(0,0,0,.12);
+      min-width: 140px;
+    }
+    button:active{ transform: translateY(1px) scale(.99); }
+    #yesBtn{
+      background: linear-gradient(135deg, #7CFFB2, var(--yes));
+    }
+    #noBtn{
+      background: linear-gradient(135deg, #ffd1d1, var(--no));
+      position:relative;
+    }
+    .hint{
+      margin-top:14px;
+      font-size:13px;
+      opacity:.75;
+    }
+    .yay{
+      display:none;
+      margin-top:18px;
+      padding:16px;
+      border-radius:16px;
+      background: rgba(255,255,255,.75);
+      border:1px solid rgba(255,255,255,.7);
+    }
+    .yay h2{ margin:0 0 6px; }
+    .yay p{ margin:0; }
+    .footer{
+      margin-top:18px;
+      font-size:12px;
+      opacity:.65;
+    }
+    .shake{
+      animation: shake .25s ease-in-out 1;
+    }
+    @keyframes shake{
+      0%{ transform:translateX(0); }
+      25%{ transform:translateX(-6px); }
+      50%{ transform:translateX(6px); }
+      75%{ transform:translateX(-4px); }
+      100%{ transform:translateX(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1 id="title">Hey <span id="name">Ribi</span> 💘</h1>
+    <p id="question">Will you be my Valentine?</p>
+
+    <div class="buttons">
+      <button id="yesBtn">Yes 😊</button>
+      <button id="noBtn">No 🙃</button>
+    </div>
+
+    <div class="hint">Tip: the “No” button is… kinda shy 😅</div>
+
+    <div class="yay" id="yayBox">
+      <h2>YAY!!! 🎉💖</h2>
+      <p id="yayMsg">You just made my whole day 🫶</p>
+    </div>
+
+    <div class="footer">Made with ❤️ just for you</div>
+  </div>
+
+  <script>
+    // ✅ Customize these:
+    const herName = "Ribi";
+    const yayMessage = "You just made my whole day 🫶";
+
+    document.getElementById("name").textContent = herName;
+    document.getElementById("yayMsg").textContent = yayMessage;
+
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn  = document.getElementById("noBtn");
+    const yayBox = document.getElementById("yayBox");
+
+    let noDodges = 0;
+
+    function showYay() {
+      yayBox.style.display = "block";
+      yesBtn.disabled = true;
+      noBtn.disabled = true;
+      yesBtn.style.opacity = 0.85;
+      noBtn.style.opacity  = 0.85;
+      popHearts(28);
+    }
+
+    yesBtn.addEventListener("click", showYay);
+
+    function moveNoButton() {
+      const card = document.querySelector(".card");
+      const cardRect = card.getBoundingClientRect();
+
+      const btnRect = noBtn.getBoundingClientRect();
+      const maxX = cardRect.width - btnRect.width - 20;
+      const maxY = cardRect.height - btnRect.height - 20;
+
+      const x = Math.random() * Math.max(0, maxX);
+      const y = Math.random() * Math.max(0, maxY);
+
+      noBtn.style.position = "absolute";
+      noBtn.style.left = x + "px";
+      noBtn.style.top  = y + "px";
+
+      noDodges++;
+      const scale = 1 + Math.min(noDodges * 0.08, 0.6);
+      yesBtn.style.transform = `scale(${scale})`;
+    }
+
+    noBtn.addEventListener("mouseenter", moveNoButton);
+
+    noBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      noBtn.classList.remove("shake");
+      void noBtn.offsetWidth;
+      noBtn.classList.add("shake");
+      moveNoButton();
+    });
+
+    function popHearts(count = 18) {
+      for (let i = 0; i < count; i++) {
+        const h = document.createElement("div");
+        h.className = "heart";
+        const left = Math.random() * 100;
+        const duration = 3 + Math.random() * 3;
+        const size = 10 + Math.random() * 18;
+
+        h.style.left = left + "vw";
+        h.style.bottom = "-20px";
+        h.style.width = size + "px";
+        h.style.height = size + "px";
+        h.style.animationDuration = duration + "s";
+
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), duration * 1000);
+      }
+    }
+  </script>
+</body>
+</html>
 
